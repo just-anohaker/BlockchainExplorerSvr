@@ -5,6 +5,8 @@ import koaCors = require("@koa/cors");
 import socketio = require("socket.io");
 import { Server } from "http";
 
+import AppFacade from "./app/App";
+
 
 function main(): void {
     program
@@ -50,6 +52,9 @@ function initServer() {
 
     app.use(koaCors());
 
+    // init application;
+    AppFacade.getInstance().initServer(app, httpio);
+
     app.use(async ctx => {
         ctx.body = {
             success: false,
@@ -61,6 +66,8 @@ function initServer() {
         console.log(`[app] listening on http://${program.host}:${program.port}`);
     });
 
+
+    AppFacade.getInstance().sendNotification("evt_app_ready");
 
     return { app, http: httpsvr, io: httpio };
 }

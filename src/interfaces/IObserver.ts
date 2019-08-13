@@ -1,13 +1,13 @@
 import INotification from "./INotification";
 
 interface IObserver {
-    setNotifyMethod(mothod: Function): void;
+    setMethod(mothod: Function): void;
 
-    setNotifyContext(context: any): void;
+    setContext(context: any): void;
 
-    notifyObserver(notification: INotification): void;
+    notify(notification: INotification): void;
 
-    compareNotifyContext(context: any): boolean;
+    compareContext(context: any): boolean;
 }
 
 export default IObserver;
