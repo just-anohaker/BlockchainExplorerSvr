@@ -1,13 +1,9 @@
-import Mediator from "../../../patterns/mediator/Mediator";
-import IFacade from "../../../interfaces/IFacade";
-import AppFacade from "../../App";
-import INotification from "../../../interfaces/INotification";
-
 import koa = require("koa");
 import socketio = require("socket.io");
 import koarouter = require("koa-router");
-import Observer from "../../../patterns/observer/Observer";
-import IObserver from "../../../interfaces/IObserver";
+import { Mediator, IFacade, INotification, IObserver, Observer } from "pure-framework";
+
+import AppFacade from "../../App";
 import OkexProxy from "../../proxy/okex";
 
 type InitServerNotificationBody = {

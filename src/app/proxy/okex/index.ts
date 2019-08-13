@@ -1,10 +1,5 @@
-import Proxy from "../../../patterns/proxy/Proxy";
-import IFacade from "../../../interfaces/IFacade";
-
 import { PublicClient, V3WebsocketClient } from "@okfe/okex-node";
-import IObserver from "../../../interfaces/IObserver";
-import Observer from "../../../patterns/observer/Observer";
-import INotification from "../../../interfaces/INotification";
+import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
 import AppFacade from "../../App";
 
 const TIMEOUT_DURATION = 30 * 1000;

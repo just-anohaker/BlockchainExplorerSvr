@@ -1,4 +1,4 @@
-import Facade from "../patterns/facade/Facade";
+import { Facade, IFacade } from "pure-framework";
 
 /// mediators
 import OkexMediator from "./mediator/okex";
@@ -9,7 +9,7 @@ import OkexProxy from "./proxy/okex";
 import koa = require("koa");
 import socketio = require("socket.io");
 
-class AppFacade extends Facade {
+class AppFacade extends Facade implements IFacade {
     private static instance?: AppFacade;
 
     static getInstance(): AppFacade {
