@@ -38,7 +38,18 @@ class OkexMediator extends Mediator {
         AppFacade.getInstance().registerObserver("evt_okex_ticker", this.observer);
     }
 
-    onNotification(notificaton: INotification) {
+    // public
+    async getOkexTicker(ctx: koa.Context): Promise<void> {
+        try {
+            const result = await this.OkexProxy.getSpotTicker("ETM-USDT");
+            this.response(ctx, result, undefined);
+        } catch (error) {
+            this.response(ctx, undefined, error.toString());
+        }
+    }
+
+    // private
+    private onNotification(notificaton: INotification) {
         const name = notificaton.getName();
         if (name === "evt_init_server") {
             const body = notificaton.getBody() as InitServerNotificationBody;
@@ -50,7 +61,7 @@ class OkexMediator extends Mediator {
         }
     }
 
-    initAPI(koa: koa<any, {}>): void {
+    private initAPI(koa: koa<any, {}>): void {
         const router = new koarouter();
 
         router.get("/api/okex/ticker", this.getOkexTicker.bind(this));
@@ -58,22 +69,13 @@ class OkexMediator extends Mediator {
         koa.use(router.routes());
     }
 
-    async getOkexTicker(ctx: koa.Context): Promise<void> {
-        try {
-            const result = await this.OkexProxy.getSpotTicker("ETM-USDT");
-            this.response(ctx, result, undefined);
-        } catch (error) {
-            this.response(ctx, undefined, error.toString());
-        }
-    }
-
-    notifyOkexTicker(body: OkexTickerBody): void {
+    private notifyOkexTicker(body: OkexTickerBody): void {
         // TODO
         console.log("notifyOkexTicker:", body);
         this.io ? this.io.emit("okex_ticker", body) : undefined;
     }
 
-    response(ctx: koa.Context, body?: any, error?: string): void {
+    private response(ctx: koa.Context, body?: any, error?: string): void {
         if (body) {
             ctx.body = { success: true, data: body };
 
@@ -83,7 +85,7 @@ class OkexMediator extends Mediator {
         ctx.body = { success: false, error };
     }
 
-    get OkexProxy(): OkexProxy {
+    private get OkexProxy(): OkexProxy {
         return AppFacade.getInstance().retrieveProxy(OkexProxy.TagName);
     }
 }
