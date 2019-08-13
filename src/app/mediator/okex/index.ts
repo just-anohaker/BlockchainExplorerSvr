@@ -86,7 +86,7 @@ class OkexMediator extends Mediator {
     }
 
     private get OkexProxy(): OkexProxy {
-        return AppFacade.getInstance().retrieveProxy(OkexProxy.TagName);
+        return AppFacade.getInstance().retrieveProxy(OkexProxy.TagName)! as OkexProxy;
     }
 }
 

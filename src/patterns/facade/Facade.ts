@@ -13,7 +13,7 @@ import Notification from "../observer/Notification";
 
 class Facade implements IFacade {
     protected models?: IModel;
-    protected controllers: IController;
+    protected controllers?: IController;
     protected observers: Map<string, IObserver[]>;
 
     constructor() {

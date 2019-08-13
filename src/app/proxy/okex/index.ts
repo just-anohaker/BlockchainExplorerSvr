@@ -99,7 +99,7 @@ class OkexProxy extends Proxy {
     }
 
     private initMonitChannel() {
-        this.websocketClient.subscribe("spot/ticker:ETM-USDT")
+        this.websocketClient!.subscribe("spot/ticker:ETM-USDT")
     }
 
     private onWebsocketOpened() {
@@ -143,7 +143,7 @@ class OkexProxy extends Proxy {
     private onSpotTickerMessage(dataObj: any) {
         // console.log("[app] onSpotTickerMessage:", dataObj);
         const data = dataObj.data;
-        data.forEach(item => {
+        data.forEach((item: any) => {
             if (item.instrument_id === "ETM-USDT") {
                 this.sendNotification("evt_okex_ticker", item);
             }

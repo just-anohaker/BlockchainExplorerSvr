@@ -30,7 +30,7 @@ class Controller implements IController {
 
         const mediator = this._mediators.get(mediatorName);
         this._mediators.delete(mediatorName);
-        mediator.onRemove();
+        mediator!.onRemove();
         return mediator;
     }
 

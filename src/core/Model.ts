@@ -30,7 +30,7 @@ class Model implements IModel {
 
         const proxy = this._proxies.get(proxyName);
         this._proxies.delete(proxyName);
-        proxy.onRemove();
+        proxy!.onRemove();
         return proxy;
     }
 
