@@ -2,7 +2,7 @@ import { Facade, IFacade } from "pure-framework";
 import koa = require("koa");
 import socketio = require("socket.io");
 
-import AppEvents from "./AppEvents";
+import events from "./base/common/events";
 
 /// mediators
 import OkexMediator from "./mediator/okex";
@@ -35,11 +35,11 @@ class AppFacade extends Facade implements IFacade {
     }
 
     initServer(koa: koa<any, {}>, io: socketio.Server): void {
-        this.sendNotification(AppEvents.EvtInitServer, { koa, io });
+        this.sendNotification(events.EvtInitServer, { koa, io });
     }
 
     appReady(): void {
-        this.sendNotification(AppEvents.EvtAppReady);
+        this.sendNotification(events.EvtAppReady);
     }
 }
 

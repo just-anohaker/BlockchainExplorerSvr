@@ -1,8 +1,8 @@
 import { PublicClient, V3WebsocketClient } from "@okfe/okex-node";
 import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
 import AppFacade from "../../App";
-import AppEvents from "../../AppEvents";
-import { OkexETMInstrumentId } from "../../AppConfig";
+import events from "../../base/common/events";
+import { constants } from "../../base/config";
 
 const TIMEOUT_DURATION = 30 * 1000;
 const CHANNEL_PREFIX = "spot/ticker";
@@ -25,12 +25,12 @@ class OkexProxy extends Proxy {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver(AppEvents.EvtAppReady, this.observer);
+        AppFacade.getInstance().registerObserver(events.EvtAppReady, this.observer);
     }
 
     onNotification(notification: INotification): void {
         const name = notification.getName();
-        if (name === AppEvents.EvtAppReady) {
+        if (name === events.EvtAppReady) {
             // console.log("app ready");
 
             this.startWebsocketClient();
@@ -87,7 +87,7 @@ class OkexProxy extends Proxy {
     }
 
     private initMonitChannel() {
-        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${OkexETMInstrumentId}`);
+        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexETMInstrumentId}`);
     }
 
     private onWebsocketOpened() {
@@ -132,8 +132,8 @@ class OkexProxy extends Proxy {
         // console.log("[app] onSpotTickerMessage:", dataObj);
         const data = dataObj.data;
         data.forEach((item: any) => {
-            if (item.instrument_id === OkexETMInstrumentId) {
-                this.sendNotification(AppEvents.EvtOkexTicker, item);
+            if (item.instrument_id === constants.cOkexETMInstrumentId) {
+                this.sendNotification(events.EvtOkexTicker, item);
             }
         });
     }

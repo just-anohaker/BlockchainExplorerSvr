@@ -1,5 +1,5 @@
 // events for framework
-const enum AppEvents {
+export const enum AppEvents {
     // system
     EvtInitServer = "event_init_server",
     EvtAppReady = "event_app_ready",
@@ -9,8 +9,8 @@ const enum AppEvents {
 }
 
 // events for socketio
-export const enum NotifictaionEvents {
-    NotificationOkexTicker = "okex_ticker",
+export const enum NotificationNames {
+    NNOkexTicker = "okex_ticker",
 }
 
 export default AppEvents;
