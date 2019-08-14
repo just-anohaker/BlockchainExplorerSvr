@@ -1,13 +1,13 @@
 import { Facade, IFacade } from "pure-framework";
+import koa = require("koa");
+import socketio = require("socket.io");
+
+import AppEvents from "./AppEvents";
 
 /// mediators
 import OkexMediator from "./mediator/okex";
 /// proxies
 import OkexProxy from "./proxy/okex";
-/// observers
-
-import koa = require("koa");
-import socketio = require("socket.io");
 
 class AppFacade extends Facade implements IFacade {
     private static instance?: AppFacade;
@@ -16,7 +16,6 @@ class AppFacade extends Facade implements IFacade {
         if (AppFacade.instance === undefined) {
             const appFacade = new AppFacade();
             AppFacade.instance = appFacade;
-            appFacade.initializeObservers();
             appFacade.initializeProxies();
             appFacade.initializeMediators();
         }
@@ -35,12 +34,12 @@ class AppFacade extends Facade implements IFacade {
         this.registerProxy(new OkexProxy(this));
     }
 
-    private initializeObservers(): void {
-
+    initServer(koa: koa<any, {}>, io: socketio.Server): void {
+        this.sendNotification(AppEvents.EvtInitServer, { koa, io });
     }
 
-    initServer(koa: koa<any, {}>, io: socketio.Server): void {
-        this.sendNotification("evt_init_server", { koa, io });
+    appReady(): void {
+        this.sendNotification(AppEvents.EvtAppReady);
     }
 }
 

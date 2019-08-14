@@ -1,8 +1,11 @@
 import { PublicClient, V3WebsocketClient } from "@okfe/okex-node";
 import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
 import AppFacade from "../../App";
+import AppEvents from "../../AppEvents";
+import { OkexETMInstrumentId } from "../../AppConfig";
 
 const TIMEOUT_DURATION = 30 * 1000;
+const CHANNEL_PREFIX = "spot/ticker";
 
 class OkexProxy extends Proxy {
     static TagName: string = "OkexProxy";
@@ -22,12 +25,12 @@ class OkexProxy extends Proxy {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver("evt_app_ready", this.observer);
+        AppFacade.getInstance().registerObserver(AppEvents.EvtAppReady, this.observer);
     }
 
     onNotification(notification: INotification): void {
         const name = notification.getName();
-        if (name === "evt_app_ready") {
+        if (name === AppEvents.EvtAppReady) {
             // console.log("app ready");
 
             this.startWebsocketClient();
@@ -61,16 +64,6 @@ class OkexProxy extends Proxy {
             console.log("[app] startTimeout handled");
             this.timeout = undefined;
 
-            if (this.websocketClient) {
-                const client = this.websocketClient;
-                this.websocketClient = undefined;
-
-                client.removeAllListeners("open");
-                client.removeAllListeners("close");
-                client.removeAllListeners("message");
-                client.close();
-            }
-
             this.startWebsocketClient();
         }, TIMEOUT_DURATION);
     }
@@ -94,7 +87,7 @@ class OkexProxy extends Proxy {
     }
 
     private initMonitChannel() {
-        this.websocketClient!.subscribe("spot/ticker:ETM-USDT")
+        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${OkexETMInstrumentId}`);
     }
 
     private onWebsocketOpened() {
@@ -123,7 +116,7 @@ class OkexProxy extends Proxy {
                 }
             } else if (dataObj.table && typeof dataObj.table === "string") {
                 switch (dataObj.table) {
-                    case "spot/ticker": {
+                    case CHANNEL_PREFIX: {
                         this.onSpotTickerMessage(dataObj);
                     }
                 }
@@ -139,8 +132,8 @@ class OkexProxy extends Proxy {
         // console.log("[app] onSpotTickerMessage:", dataObj);
         const data = dataObj.data;
         data.forEach((item: any) => {
-            if (item.instrument_id === "ETM-USDT") {
-                this.sendNotification("evt_okex_ticker", item);
+            if (item.instrument_id === OkexETMInstrumentId) {
+                this.sendNotification(AppEvents.EvtOkexTicker, item);
             }
         });
     }

@@ -7,7 +7,6 @@ import { Server } from "http";
 
 import AppFacade from "./app/App";
 
-
 function main(): void {
     program
         .version("1.0.0")
@@ -41,15 +40,12 @@ function initServer() {
     app.use(koaBodyParser());
     app.use(async (ctx, next) => {
         console.log(`[app] ${ctx.method}:${ctx.path}`);
-
         await next();
     });
-
     app.use(async (ctx, next) => {
         ctx.body = ctx.request.body;
         await next();
     });
-
     app.use(koaCors());
 
     // init application;
@@ -66,8 +62,6 @@ function initServer() {
         console.log(`[app] listening on http://${program.host}:${program.port}`);
     });
 
-
-    AppFacade.getInstance().sendNotification("evt_app_ready");
-
+    AppFacade.getInstance().appReady();
     return { app, http: httpsvr, io: httpio };
 }
