@@ -10,8 +10,8 @@ import AppFacade from "./app/App";
 function main(): void {
     program
         .version("1.0.0")
-        .option("-h, --host <hostname>", "configurate server host", "0.0.0.0")
-        .option("-p, --port <port>", "configurate server post", 2019)
+        .option("--host <hostname>", "configurate server host", "0.0.0.0")
+        .option("--port <port>", "configurate server post", 2019)
         .parse(process.argv);
 
 

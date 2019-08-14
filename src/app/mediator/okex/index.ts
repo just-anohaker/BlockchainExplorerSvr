@@ -63,6 +63,7 @@ class OkexMediator extends Mediator {
     private initAPI(koa: koa<any, {}>): void {
         const router = new koarouter();
 
+        /// routes
         router.get(ApiRouters.APIOkexTicker, this.getOkexTicker.bind(this));
 
         koa.use(router.routes());
