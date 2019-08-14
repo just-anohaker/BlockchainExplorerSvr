@@ -5,8 +5,8 @@ import { Mediator, IFacade, INotification, IObserver, Observer } from "pure-fram
 
 import AppFacade from "../../App";
 import OkexProxy from "../../proxy/okex";
-import { AppEvents, NotificationNames } from "../../base/common/events";
-import ApiRouters from "../../base/routers";
+import appevents from "../../base/common/events";
+import approuters from "../../base/routers";
 import { constants } from "../../base/config";
 import { NBInitServer, NBOkexTicker } from "../../base/common/definitions";
 
@@ -24,8 +24,8 @@ class OkexMediator extends Mediator {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver(AppEvents.EvtInitServer, this.observer);
-        AppFacade.getInstance().registerObserver(AppEvents.EvtOkexTicker, this.observer);
+        AppFacade.getInstance().registerObserver(appevents.EvtInitServer, this.observer);
+        AppFacade.getInstance().registerObserver(appevents.EvtOkexTicker, this.observer);
     }
 
     // public
@@ -41,11 +41,11 @@ class OkexMediator extends Mediator {
     // private
     private onNotification(notificaton: INotification) {
         const name = notificaton.getName();
-        if (name === AppEvents.EvtInitServer) {
+        if (name === appevents.EvtInitServer) {
             const body = notificaton.getBody() as NBInitServer;
             this.io = body.io;
             this.initAPI(body.koa);
-        } else if (name === AppEvents.EvtOkexTicker) {
+        } else if (name === appevents.EvtOkexTicker) {
             const body = notificaton.getBody() as NBOkexTicker;
             this.notifyOkexTicker(body);
         }
@@ -55,7 +55,7 @@ class OkexMediator extends Mediator {
         const router = new koarouter();
 
         /// routes
-        router.get(ApiRouters.APIOkexTicker, this.getOkexTicker.bind(this));
+        router.get(approuters.APIOkexTicker, this.getOkexTicker.bind(this));
 
         koa.use(router.routes());
     }
@@ -63,7 +63,7 @@ class OkexMediator extends Mediator {
     private notifyOkexTicker(body: NBOkexTicker): void {
         // TODO
         console.log("[app] notifyOkexTicker:", body.instrument_id, body.last);
-        this.io ? this.io.emit(NotificationNames.NNOkexTicker, body) : undefined;
+        this.io ? this.io.emit(appevents.IOEvtOkexTicker, body) : undefined;
     }
 
     private response(ctx: koa.Context, body?: any, error?: string): void {

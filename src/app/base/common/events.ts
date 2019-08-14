@@ -5,12 +5,10 @@ export const enum AppEvents {
     EvtAppReady = "event_app_ready",
 
     // app
-    EvtOkexTicker = "event_okex_ticker"
-}
+    EvtOkexTicker = "event_okex_ticker",
 
-// events for socketio
-export const enum NotificationNames {
-    NNOkexTicker = "okex_ticker",
+    // socket io events
+    IOEvtOkexTicker = "okex_ticker"
 }
 
 export default AppEvents;

@@ -1,7 +1,7 @@
 import { PublicClient, V3WebsocketClient } from "@okfe/okex-node";
 import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
 import AppFacade from "../../App";
-import events from "../../base/common/events";
+import appevents from "../../base/common/events";
 import { constants } from "../../base/config";
 
 const TIMEOUT_DURATION = 30 * 1000;
@@ -25,12 +25,12 @@ class OkexProxy extends Proxy {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver(events.EvtAppReady, this.observer);
+        AppFacade.getInstance().registerObserver(appevents.EvtAppReady, this.observer);
     }
 
     onNotification(notification: INotification): void {
         const name = notification.getName();
-        if (name === events.EvtAppReady) {
+        if (name === appevents.EvtAppReady) {
             // console.log("app ready");
 
             this.startWebsocketClient();
@@ -133,7 +133,7 @@ class OkexProxy extends Proxy {
         const data = dataObj.data;
         data.forEach((item: any) => {
             if (item.instrument_id === constants.cOkexETMInstrumentId) {
-                this.sendNotification(events.EvtOkexTicker, item);
+                this.sendNotification(appevents.EvtOkexTicker, item);
             }
         });
     }
