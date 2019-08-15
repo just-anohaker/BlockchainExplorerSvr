@@ -103,7 +103,7 @@
 }
 ```
 
-(Event)"okex_eth_rate"
+**(Event)"okex_eth_rate"**
 
 数据
 
