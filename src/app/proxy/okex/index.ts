@@ -144,6 +144,8 @@ class OkexProxy extends Proxy {
 
     private initMonitChannel() {
         this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexETMInstrumentId}`);
+        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexBTCInstrumentId}`);
+        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexETHInstrumentId}`);
     }
 
     private onWebsocketOpened() {
@@ -190,6 +192,10 @@ class OkexProxy extends Proxy {
         data.forEach((item: any) => {
             if (item.instrument_id === constants.cOkexETMInstrumentId) {
                 this.sendNotification(appevents.EvtOkexTicker, item);
+            } else if (item.instrument_id === constants.cOkexBTCInstrumentId) {
+                this.sendNotification(appevents.EvtOkexBTCRate, item);
+            } else if (item.instrument_id === constants.cOkexETHInstrumentId) {
+                this.sendNotification(appevents.EvtOkexETHRate, item);
             }
         });
     }

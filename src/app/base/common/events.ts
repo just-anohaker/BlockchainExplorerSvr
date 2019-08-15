@@ -7,10 +7,14 @@ export const enum AppEvents {
     // app
     EvtOkexTicker = "event_okex_ticker",
     EvtOkexRate = "event_okex_rate",
+    EvtOkexBTCRate = "event_okex_btc_rate",
+    EvtOkexETHRate = "event_okex_eth_rate",
 
     // socket io events
     IOEvtOkexTicker = "okex_ticker",
-    IOEvtOkexRate = "okex_rate"
+    IOEvtOkexRate = "okex_rate",
+    IOEvtOkexBTCRate = "okex_btc_rate",
+    IOEvtOkexETHRate = "okex_eth_rate"
 }
 
 export default AppEvents;

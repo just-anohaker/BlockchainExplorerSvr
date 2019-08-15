@@ -1,6 +1,7 @@
 import koa = require("koa");
 import socketio = require("socket.io");
 import koarouter = require("koa-router");
+import { Big } from "big.js";
 import { Mediator, IFacade, INotification, IObserver, Observer } from "pure-framework";
 
 import AppFacade from "../../App";
@@ -9,6 +10,11 @@ import appevents from "../../base/common/events";
 import approuters from "../../base/routers";
 import { constants } from "../../base/config";
 import { NBInitServer, NBOkexTicker, NBOkexRate } from "../../base/common/definitions";
+
+const instrument2rate = function (last: string): string {
+    const rate = new Big("1").div(last);
+    return rate.toString();
+}
 
 class OkexMediator extends Mediator {
     static TagName: string = "OkexMediator";
@@ -27,6 +33,8 @@ class OkexMediator extends Mediator {
         AppFacade.getInstance().registerObserver(appevents.EvtInitServer, this.observer);
         AppFacade.getInstance().registerObserver(appevents.EvtOkexTicker, this.observer);
         AppFacade.getInstance().registerObserver(appevents.EvtOkexRate, this.observer);
+        AppFacade.getInstance().registerObserver(appevents.EvtOkexBTCRate, this.observer);
+        AppFacade.getInstance().registerObserver(appevents.EvtOkexETHRate, this.observer);
     }
 
     onRemove(): void {
@@ -35,6 +43,8 @@ class OkexMediator extends Mediator {
         AppFacade.getInstance().removeObserver(appevents.EvtInitServer, this);
         AppFacade.getInstance().removeObserver(appevents.EvtOkexTicker, this);
         AppFacade.getInstance().removeObserver(appevents.EvtOkexRate, this);
+        AppFacade.getInstance().removeObserver(appevents.EvtOkexBTCRate, this);
+        AppFacade.getInstance().removeObserver(appevents.EvtOkexETHRate, this);
     }
 
     // public
@@ -56,6 +66,24 @@ class OkexMediator extends Mediator {
         }
     }
 
+    async getOkexBTCRate(ctx: koa.Context): Promise<void> {
+        try {
+            const result = await this.OkexProxy.getSpotTicker(constants.cOkexBTCInstrumentId);
+            this.response(ctx, { rate: instrument2rate(result.last) }, undefined);
+        } catch (error) {
+            this.response(ctx, undefined, error.toString());
+        }
+    }
+
+    async getOkexETHRate(ctx: koa.Context): Promise<void> {
+        try {
+            const result = await this.OkexProxy.getSpotTicker(constants.cOkexETHInstrumentId);
+            this.response(ctx, { rate: instrument2rate(result.last) }, undefined);
+        } catch (error) {
+            this.response(ctx, undefined, error.toString());
+        }
+    }
+
     // private
     private onNotification(notification: INotification) {
         const name = notification.getName();
@@ -69,6 +97,12 @@ class OkexMediator extends Mediator {
         } else if (name === appevents.EvtOkexRate) {
             const body = notification.getBody() as NBOkexRate;
             this.notifyOkexRate(body);
+        } else if (name === appevents.EvtOkexBTCRate) {
+            const body = notification.getBody() as NBOkexTicker;
+            this.notifyOkexBTCRate(body);
+        } else if (name === appevents.EvtOkexETHRate) {
+            const body = notification.getBody() as NBOkexTicker;
+            this.notifyOkexETHRate(body);
         }
     }
 
@@ -78,6 +112,8 @@ class OkexMediator extends Mediator {
         /// routes
         router.get(approuters.APIOkexTicker, this.getOkexTicker.bind(this));
         router.get(approuters.APIOkexRate, this.getOkexRate.bind(this));
+        router.get(approuters.APIOkexBTCRate, this.getOkexBTCRate.bind(this));
+        router.get(approuters.APIOkexETHRate, this.getOkexETHRate.bind(this));
 
         koa.use(router.routes());
     }
@@ -92,6 +128,18 @@ class OkexMediator extends Mediator {
         // TODO
         console.log("[app] notifyOkexRate:", body.rate);
         this.io ? this.io.emit(appevents.IOEvtOkexRate, body) : undefined;
+    }
+
+    private notifyOkexBTCRate(body: NBOkexTicker): void {
+        // TODO
+        console.log("[app] notifyOkexBTCRate:", body.last, instrument2rate(body.last));
+        this.io ? this.io.emit(appevents.IOEvtOkexBTCRate, { rate: instrument2rate(body.last) }) : undefined;
+    }
+
+    private notifyOkexETHRate(body: NBOkexTicker): void {
+        // TODO
+        console.log("[app] notifyOkexETHRate:", body.last, instrument2rate(body.last));
+        this.io ? this.io.emit(appevents.IOEvtOkexETHRate, { rate: instrument2rate(body.last) }) : undefined;
     }
 
     private response(ctx: koa.Context, body?: any, error?: string): void {

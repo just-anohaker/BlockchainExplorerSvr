@@ -33,6 +33,30 @@
 | error   | string  | success=False时返回，success=True时返回其它字段              |
 | data    | object  | 当前USD/CNY汇率，详细信息参见(**Websocket[event"okex_rate"]**) |
 
+### 获取当前汇率(USD/BTC)
+
+***(GET)API接口/api/okex/rate/btc***
+
+返回值
+
+| 字段    | 类型    | 说明                                                         |
+| ------- | ------- | ------------------------------------------------------------ |
+| success | boolean | 请求是否成功；True:成功;False:失败                           |
+| error   | string  | success=False时返回，success=True时返回其他字段              |
+| data    | object  | 当前USD/BTC汇率，详细信息参见(**Websocket[event"okex_btc_rate"]**) |
+
+### 获取当前汇率(USD/ETH)
+
+***(GET)API接口/api/okex/rate/eth***
+
+返回值
+
+| 字段    | 类型    | 说明                                                         |
+| ------- | ------- | ------------------------------------------------------------ |
+| success | boolean | 请求是否成功；True:成功;False:失败                           |
+| error   | string  | success=False时返回，success=True时返回其他字段              |
+| data    | object  | 当前USD/ETH汇率，详细信息参见(**Websocket[event"okex_eth_rate"]**) |
+
 
 
 ## Websocket
@@ -66,6 +90,26 @@
 ```javascript
 {
     "rate": "6.958"			// USD/CNY汇率
+}
+```
+
+***(Event)"okex_btc_rate"***
+
+数据
+
+```javascript
+{
+    "rate": "0.0001017356094980365"		// USD/BTC汇率
+}
+```
+
+(Event)"okex_eth_rate"
+
+数据
+
+```javascript
+{
+    "rate": "0.00557724484104852203"		// USD/ETH汇率
 }
 ```
 
