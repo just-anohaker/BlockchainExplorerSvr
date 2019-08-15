@@ -21,6 +21,18 @@
 | error   | string  | success=False时返回，success=True时返回其它字段              |
 | data    | object  | 币价的详细信息，详细信息参见(**Websocket[event"okex_ticker]**") |
 
+### 获取当前汇率(USD/CNY)
+
+***(GET)API接口/api/okex/rate***
+
+返回值
+
+| 字段    | 类型    | 说明                                                         |
+| ------- | ------- | ------------------------------------------------------------ |
+| success | boolean | 请求是否成功；True:成功;False:失败                           |
+| error   | string  | success=False时返回，success=True时返回其它字段              |
+| data    | object  | 当前USD/CNY汇率，详细信息参见(**Websocket[event"okex_rate"]**) |
+
 
 
 ## Websocket
@@ -44,6 +56,16 @@
     "base_volume_24h": "38615188.0353",
     "timestamp": "2019-08-13T08:02:01.998Z",
     "quote_volume_24h": "8807101.6266"
+}
+```
+
+***(Event)"okex_rate"***
+
+数据
+
+```javascript
+{
+    "rate": "6.958"			// USD/CNY汇率
 }
 ```
 

@@ -6,9 +6,11 @@ export const enum AppEvents {
 
     // app
     EvtOkexTicker = "event_okex_ticker",
+    EvtOkexRate = "event_okex_rate",
 
     // socket io events
-    IOEvtOkexTicker = "okex_ticker"
+    IOEvtOkexTicker = "okex_ticker",
+    IOEvtOkexRate = "okex_rate"
 }
 
 export default AppEvents;

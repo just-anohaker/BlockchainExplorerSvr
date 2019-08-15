@@ -6,9 +6,14 @@ import socketio = require("socket.io");
 export type NBInitServer = {
     koa: koa<any, {}>;
     io: socketio.Server;
-};
+}
 
 export type NBOkexTicker = {
     instrument_id: string;
     last: string;
-};
+}
+
+export type NBOkexRate = {
+    // instrument_id: string;
+    rate: string;
+}

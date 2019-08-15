@@ -1,10 +1,11 @@
 import { PublicClient, V3WebsocketClient } from "@okfe/okex-node";
 import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
 import AppFacade from "../../App";
-import appevents from "../../base/common/events";
+import appevents, { AppEvents } from "../../base/common/events";
 import { constants } from "../../base/config";
 
 const TIMEOUT_DURATION = 30 * 1000;
+const RATE_FLUSH_INTERVAL = 10 * 1000;
 const CHANNEL_PREFIX = "spot/ticker";
 
 class OkexProxy extends Proxy {
@@ -16,10 +17,14 @@ class OkexProxy extends Proxy {
     private observer: IObserver;
     private timeout?: NodeJS.Timeout;
 
+    private legalCurrencyRate: string;
+    private legalCurrencyRateHandler?: NodeJS.Timeout;
+
     constructor(facade: IFacade) {
         super(OkexProxy.TagName, facade);
 
         this.observer = new Observer(this.onNotification, this);
+        this.legalCurrencyRate = "";
     }
 
     onRegister(): void {
@@ -28,12 +33,20 @@ class OkexProxy extends Proxy {
         AppFacade.getInstance().registerObserver(appevents.EvtAppReady, this.observer);
     }
 
+    onRemove(): void {
+        super.onRemove();
+
+        AppFacade.getInstance().removeObserver(appevents.EvtAppReady, this);
+        this.stopLegalCurrencyRate();
+    }
+
     onNotification(notification: INotification): void {
         const name = notification.getName();
         if (name === appevents.EvtAppReady) {
             // console.log("app ready");
 
             this.startWebsocketClient();
+            this.startLegalCurrencyRate();
         }
     }
 
@@ -42,7 +55,50 @@ class OkexProxy extends Proxy {
         return await this.publicClient.spot().getSpotTicker(instrument_id);
     }
 
+    async getRate(): Promise<{ rate: string }> {
+        // return await this.publicClient.swap().getRate();
+        if (this.legalCurrencyRate === "") {
+            try {
+                const result = await this._getRate();
+                this.legalCurrencyRate = result.rate;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        return { rate: this.legalCurrencyRate };
+    }
+
     // private
+    async _getRate(): Promise<{ rate: string }> {
+        return await this.publicClient.swap().getRate();
+    }
+
+    private startLegalCurrencyRate(): void {
+        const self = this;
+
+        this.stopLegalCurrencyRate();
+
+        setImmediate(function _tick(): void {
+            self._getRate()
+                .then(result => {
+                    if (self.legalCurrencyRate !== result.rate) {
+                        self.legalCurrencyRate = result.rate;
+                    }
+                    self.sendNotification(appevents.EvtOkexRate, { rate: result.rate });
+                    self.legalCurrencyRateHandler = setTimeout(_tick, RATE_FLUSH_INTERVAL);
+                })
+                .catch((error: any) => {
+                    self.legalCurrencyRateHandler = setTimeout(_tick, RATE_FLUSH_INTERVAL);
+                });
+        });
+    }
+
+    private stopLegalCurrencyRate(): void {
+        this.legalCurrencyRateHandler ? clearInterval(this.legalCurrencyRateHandler) : undefined;
+        this.legalCurrencyRateHandler = undefined;
+    }
+
     private startWebsocketClient() {
         // console.log("[app] startWebsocketClient");
         this.stopWebsocketClient();
