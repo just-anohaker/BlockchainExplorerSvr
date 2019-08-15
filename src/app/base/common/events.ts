@@ -11,10 +11,15 @@ export const enum AppEvents {
     EvtOkexETHRate = "event_okex_eth_rate",
 
     // socket io events
+    // depracated
     IOEvtOkexTicker = "okex_ticker",
     IOEvtOkexRate = "okex_rate",
     IOEvtOkexBTCRate = "okex_btc_rate",
-    IOEvtOkexETHRate = "okex_eth_rate"
+    IOEvtOkexETHRate = "okex_eth_rate",
+    // end depracated
+
+    IOOkexTicker = "/okex/ticker",
+    IOOkexRate = "/okex/rate"
 }
 
 export default AppEvents;

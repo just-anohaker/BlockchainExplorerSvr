@@ -86,6 +86,53 @@ class OkexMediator extends Mediator {
         }
     }
 
+    async getTicker(ctx: koa.Context): Promise<void> {
+        const arg: string = (ctx.query.instrumentId || constants.cOkexETMInstrumentId);
+        const instrumentId = arg.trim().toUpperCase();
+        const validators: string[] = [
+            constants.cOkexETMInstrumentId,
+            constants.cOkexBTCInstrumentId,
+            constants.cOkexETHInstrumentId
+        ];
+        if (!validators.includes(instrumentId)) {
+            return this.response(ctx, undefined, `Unsupported instrumentId(${instrumentId})`);
+        }
+
+        try {
+            const result = await this.OkexProxy.getSpotTicker(instrumentId.trim().toUpperCase());
+            this.response(ctx, { instrumentId, data: result });
+        } catch (error) {
+            this.response(ctx, undefined, error.toString());
+        }
+    }
+
+    async getRate(ctx: koa.Context): Promise<void> {
+        const arg = (ctx.query.currencyName || constants.cOkexCurrencyCNY);
+        const currencyName = arg.trim().toUpperCase();
+        const validators: string[] = [
+            constants.cOkexCurrencyCNY,
+            constants.cOkexCurrencyBTC,
+            constants.cOkexCurrencyETH
+        ];
+        if (!validators.includes(currencyName)) {
+            this.response(ctx, undefined, `Unsupported currencyName(${currencyName})`);
+            return;
+        }
+
+        try {
+            if (currencyName === constants.cOkexCurrencyCNY) {
+                const result = await this.OkexProxy.getRate();
+                this.response(ctx, { currencyName, data: result }, undefined);
+            } else {
+                const result = await this.OkexProxy.getSpotTicker(`${currencyName}-USDT`);
+                this.response(ctx, { currencyName, data: { rate: instrument2rate(result.last) } }, undefined);
+            }
+        } catch (error) {
+            this.response(ctx, undefined, error.toString());
+        }
+
+    }
+
     // private
     private initAPI(koa: koa<any, {}>): void {
         const router = new koarouter();
@@ -95,6 +142,9 @@ class OkexMediator extends Mediator {
         router.get(approuters.APIOkexRate, this.getOkexRate.bind(this));
         router.get(approuters.APIOkexBTCRate, this.getOkexBTCRate.bind(this));
         router.get(approuters.APIOkexETHRate, this.getOkexETHRate.bind(this));
+
+        router.get(approuters.APIOkexGetTicker, this.getTicker.bind(this));
+        router.get(approuters.APIOkexGetRate, this.getRate.bind(this));
 
         koa.use(router.routes());
     }
@@ -125,25 +175,46 @@ class OkexMediator extends Mediator {
     private notifyOkexTicker(body: NBOkexTicker): void {
         // TODO
         console.log("[app] notifyOkexTicker:", body.instrument_id, body.last);
-        this.io ? this.io.emit(appevents.IOEvtOkexTicker, body) : undefined;
+        this.io
+            ? this.io.emit(appevents.IOEvtOkexTicker, body)
+            : undefined;
+        this.io
+            ? this.io.emit(appevents.IOOkexTicker, body)
+            : undefined;
     }
+
 
     private notifyOkexRate(body: NBOkexRate): void {
         // TODO
         console.log("[app] notifyOkexRate:", body.rate);
-        this.io ? this.io.emit(appevents.IOEvtOkexRate, body) : undefined;
+        this.io
+            ? this.io.emit(appevents.IOEvtOkexRate, body)
+            : undefined;
+        this.io
+            ? this.io.emit(appevents.IOOkexRate, { currencyName: constants.cOkexCurrencyCNY, data: body })
+            : undefined;
     }
 
     private notifyOkexBTCRate(body: NBOkexTicker): void {
         // TODO
         console.log("[app] notifyOkexBTCRate:", body.last, instrument2rate(body.last));
-        this.io ? this.io.emit(appevents.IOEvtOkexBTCRate, { rate: instrument2rate(body.last) }) : undefined;
+        this.io
+            ? this.io.emit(appevents.IOEvtOkexBTCRate, { rate: instrument2rate(body.last) })
+            : undefined;
+        this.io
+            ? this.io.emit(appevents.IOOkexRate, { currencyName: constants.cOkexCurrencyBTC, data: { rate: instrument2rate(body.last) } })
+            : undefined;
     }
 
     private notifyOkexETHRate(body: NBOkexTicker): void {
         // TODO
         console.log("[app] notifyOkexETHRate:", body.last, instrument2rate(body.last));
-        this.io ? this.io.emit(appevents.IOEvtOkexETHRate, { rate: instrument2rate(body.last) }) : undefined;
+        this.io
+            ? this.io.emit(appevents.IOEvtOkexETHRate, { rate: instrument2rate(body.last) })
+            : undefined;
+        this.io
+            ? this.io.emit(appevents.IOOkexRate, { currencyName: constants.cOkexCurrencyETH, data: { rate: instrument2rate(body.last) } })
+            : undefined;
     }
 
     // helpers

@@ -2,7 +2,11 @@
 export const enum constants {
     cOkexETMInstrumentId = "ETM-USDT",
     cOkexBTCInstrumentId = "BTC-USDT",
-    cOkexETHInstrumentId = "ETH-USDT"
+    cOkexETHInstrumentId = "ETH-USDT",
+
+    cOkexCurrencyCNY = "CNY",
+    cOkexCurrencyBTC = "BTC",
+    cOkexCurrencyETH = "ETH"
 }
 
 export default {}
