@@ -27,27 +27,19 @@ class OkexProxy extends Proxy {
         this.legalCurrencyRate = "";
     }
 
+    // overwrite
     onRegister(): void {
         super.onRegister();
 
         AppFacade.getInstance().registerObserver(appevents.EvtAppReady, this.observer);
     }
 
+    // overwrite
     onRemove(): void {
         super.onRemove();
 
         AppFacade.getInstance().removeObserver(appevents.EvtAppReady, this);
         this.stopLegalCurrencyRate();
-    }
-
-    onNotification(notification: INotification): void {
-        const name = notification.getName();
-        if (name === appevents.EvtAppReady) {
-            // console.log("app ready");
-
-            this.startWebsocketClient();
-            this.startLegalCurrencyRate();
-        }
     }
 
     // public
@@ -70,7 +62,17 @@ class OkexProxy extends Proxy {
     }
 
     // private
-    async _getRate(): Promise<{ rate: string }> {
+    private onNotification(notification: INotification): void {
+        const name = notification.getName();
+        if (name === appevents.EvtAppReady) {
+            // console.log("app ready");
+
+            this.startWebsocketClient();
+            this.startLegalCurrencyRate();
+        }
+    }
+
+    private async _getRate(): Promise<{ rate: string }> {
         return await this.publicClient.swap().getRate();
     }
 

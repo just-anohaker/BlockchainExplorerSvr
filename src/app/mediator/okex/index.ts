@@ -27,6 +27,7 @@ class OkexMediator extends Mediator {
         this.observer = new Observer(this.onNotification, this);
     }
 
+    // overwrite
     onRegister(): void {
         super.onRegister();
 
@@ -37,6 +38,7 @@ class OkexMediator extends Mediator {
         AppFacade.getInstance().registerObserver(appevents.EvtOkexETHRate, this.observer);
     }
 
+    // overwrite
     onRemove(): void {
         super.onRemove();
 
@@ -85,6 +87,19 @@ class OkexMediator extends Mediator {
     }
 
     // private
+    private initAPI(koa: koa<any, {}>): void {
+        const router = new koarouter();
+
+        /// routes
+        router.get(approuters.APIOkexTicker, this.getOkexTicker.bind(this));
+        router.get(approuters.APIOkexRate, this.getOkexRate.bind(this));
+        router.get(approuters.APIOkexBTCRate, this.getOkexBTCRate.bind(this));
+        router.get(approuters.APIOkexETHRate, this.getOkexETHRate.bind(this));
+
+        koa.use(router.routes());
+    }
+
+    // notifications
     private onNotification(notification: INotification) {
         const name = notification.getName();
         if (name === appevents.EvtInitServer) {
@@ -106,18 +121,7 @@ class OkexMediator extends Mediator {
         }
     }
 
-    private initAPI(koa: koa<any, {}>): void {
-        const router = new koarouter();
-
-        /// routes
-        router.get(approuters.APIOkexTicker, this.getOkexTicker.bind(this));
-        router.get(approuters.APIOkexRate, this.getOkexRate.bind(this));
-        router.get(approuters.APIOkexBTCRate, this.getOkexBTCRate.bind(this));
-        router.get(approuters.APIOkexETHRate, this.getOkexETHRate.bind(this));
-
-        koa.use(router.routes());
-    }
-
+    // socketio event notifications
     private notifyOkexTicker(body: NBOkexTicker): void {
         // TODO
         console.log("[app] notifyOkexTicker:", body.instrument_id, body.last);
@@ -142,6 +146,7 @@ class OkexMediator extends Mediator {
         this.io ? this.io.emit(appevents.IOEvtOkexETHRate, { rate: instrument2rate(body.last) }) : undefined;
     }
 
+    // helpers
     private response(ctx: koa.Context, body?: any, error?: string): void {
         if (body) {
             ctx.body = { success: true, data: body };
