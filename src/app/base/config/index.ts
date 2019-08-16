@@ -9,4 +9,8 @@ export const enum constants {
     cOkexCurrencyETH = "ETH"
 }
 
-export default {}
+export const config = {
+    TokenCount: 210000000,
+}
+
+export default config;

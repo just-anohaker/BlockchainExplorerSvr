@@ -6,6 +6,7 @@ import appevents from "./base/common/events";
 
 /// mediators
 import OkexMediator from "./mediator/okex";
+import TokenMediator from "./mediator/token";
 /// proxies
 import OkexProxy from "./proxy/okex";
 
@@ -16,8 +17,8 @@ class AppFacade extends Facade implements IFacade {
         if (AppFacade.instance === undefined) {
             const appFacade = new AppFacade();
             AppFacade.instance = appFacade;
-            appFacade.initializeProxies();
-            appFacade.initializeMediators();
+            appFacade.registerProxies();
+            appFacade.registerMediators();
         }
         return AppFacade.instance;
     }
@@ -26,11 +27,12 @@ class AppFacade extends Facade implements IFacade {
         super();
     }
 
-    private initializeMediators(): void {
+    private registerMediators(): void {
         this.registerMediator(new OkexMediator(this));
+        this.registerMediator(new TokenMediator(this));
     }
 
-    private initializeProxies(): void {
+    private registerProxies(): void {
         this.registerProxy(new OkexProxy(this));
     }
 

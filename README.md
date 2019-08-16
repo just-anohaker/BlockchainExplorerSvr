@@ -93,6 +93,29 @@
 | error   | string  | success=False时返回，success=True时返回其它字段              |
 | data    | object  | 指定币种汇率，详细信息参见(**Websocket[event"/okex/rate"]**) |
 
+### 获取发行量
+
+***(GET)API接口/api/token/count***
+
+返回值
+
+| 字段    | 类型   | 说明                                                       |
+| ------- | ------ | ---------------------------------------------------------- |
+| success | string | 请求是否成功；True:成功;False:失败                         |
+| error   | string | success=False时返回，success=True时返回其它字段            |
+| data    | object | 获取ETM总发行量(暂定为210000000)，格式参见"TokenCount"说明 |
+
+*"TokenCount"说明：*
+
+```javascript
+{
+    "tokenName": "ETM",						// Token名称
+    "tokenCount": 210000000				// Token总发行量
+}
+```
+
+
+
 ## Websocket
 
 ***(Event)"okex_ticker"*** **[depracated]**

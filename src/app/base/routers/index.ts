@@ -7,7 +7,8 @@ const enum ApiRouters {
     // end depracated
 
     APIOkexGetTicker = "/api/okex/getTicker",
-    APIOkexGetRate = "/api/okex/getRate"
+    APIOkexGetRate = "/api/okex/getRate",
+    APITokenCount = "/api/token/count",
 }
 
 export default ApiRouters;
