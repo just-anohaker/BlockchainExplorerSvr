@@ -97,7 +97,9 @@ class OkexProxy extends Proxy {
     }
 
     private stopLegalCurrencyRate(): void {
-        this.legalCurrencyRateHandler ? clearInterval(this.legalCurrencyRateHandler) : undefined;
+        this.legalCurrencyRateHandler
+            ? clearInterval(this.legalCurrencyRateHandler)
+            : undefined;
         this.legalCurrencyRateHandler = undefined;
     }
 
@@ -145,9 +147,15 @@ class OkexProxy extends Proxy {
     }
 
     private initMonitChannel() {
-        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexETMInstrumentId}`);
-        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexBTCInstrumentId}`);
-        this.websocketClient!.subscribe(`${CHANNEL_PREFIX}:${constants.cOkexETHInstrumentId}`);
+        this.websocketClient!.subscribe(
+            `${CHANNEL_PREFIX}:${constants.cOkexETMInstrumentId}`
+        );
+        this.websocketClient!.subscribe(
+            `${CHANNEL_PREFIX}:${constants.cOkexBTCInstrumentId}`
+        );
+        this.websocketClient!.subscribe(
+            `${CHANNEL_PREFIX}:${constants.cOkexETHInstrumentId}`
+        );
     }
 
     private onWebsocketOpened() {
@@ -159,7 +167,9 @@ class OkexProxy extends Proxy {
 
     private onWebsocketClosed(restart: boolean = true) {
         // console.log("[app] onWebsocketClosed");
-        restart ? this.stopWebsocketClient() : undefined;
+        restart
+            ? this.stopWebsocketClient()
+            : undefined;
 
         this.stopTimeout();
         this.startWebsocketClient();

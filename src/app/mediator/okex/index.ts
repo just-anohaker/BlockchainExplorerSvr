@@ -130,7 +130,6 @@ class OkexMediator extends Mediator {
         } catch (error) {
             this.response(ctx, undefined, error.toString());
         }
-
     }
 
     // private
@@ -138,10 +137,12 @@ class OkexMediator extends Mediator {
         const router = new koarouter();
 
         /// routes
+        // depracated
         router.get(approuters.APIOkexTicker, this.getOkexTicker.bind(this));
         router.get(approuters.APIOkexRate, this.getOkexRate.bind(this));
         router.get(approuters.APIOkexBTCRate, this.getOkexBTCRate.bind(this));
         router.get(approuters.APIOkexETHRate, this.getOkexETHRate.bind(this));
+        // end depracated
 
         router.get(approuters.APIOkexGetTicker, this.getTicker.bind(this));
         router.get(approuters.APIOkexGetRate, this.getRate.bind(this));
@@ -190,8 +191,12 @@ class OkexMediator extends Mediator {
         this.io
             ? this.io.emit(appevents.IOEvtOkexRate, body)
             : undefined;
+        const emitData = {
+            currencyName: constants.cOkexCurrencyCNY,
+            data: body
+        };
         this.io
-            ? this.io.emit(appevents.IOOkexRate, { currencyName: constants.cOkexCurrencyCNY, data: body })
+            ? this.io.emit(appevents.IOOkexRate, emitData)
             : undefined;
     }
 
@@ -201,8 +206,12 @@ class OkexMediator extends Mediator {
         this.io
             ? this.io.emit(appevents.IOEvtOkexBTCRate, { rate: instrument2rate(body.last) })
             : undefined;
+        const emitData = {
+            currencyName: constants.cOkexCurrencyBTC,
+            data: { rate: instrument2rate(body.last) }
+        };
         this.io
-            ? this.io.emit(appevents.IOOkexRate, { currencyName: constants.cOkexCurrencyBTC, data: { rate: instrument2rate(body.last) } })
+            ? this.io.emit(appevents.IOOkexRate, emitData)
             : undefined;
     }
 
@@ -212,18 +221,20 @@ class OkexMediator extends Mediator {
         this.io
             ? this.io.emit(appevents.IOEvtOkexETHRate, { rate: instrument2rate(body.last) })
             : undefined;
+        const emitData = {
+            currencyName: constants.cOkexCurrencyETH,
+            data: { rate: instrument2rate(body.last) }
+        };
         this.io
-            ? this.io.emit(appevents.IOOkexRate, { currencyName: constants.cOkexCurrencyETH, data: { rate: instrument2rate(body.last) } })
+            ? this.io.emit(appevents.IOOkexRate, emitData)
             : undefined;
     }
 
     // helpers
     private response(ctx: koa.Context, body?: any, error?: string): void {
-        if (body) {
-            ctx.body = { success: true, data: body };
-            return;
-        }
-        ctx.body = { success: false, error };
+        ctx.body = body
+            ? { success: true, data: body }
+            : { success: false, error };
     }
 
     private get OkexProxy(): OkexProxy {
