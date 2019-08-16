@@ -4,7 +4,6 @@ import koarouter = require("koa-router");
 import { Big } from "big.js";
 import { Mediator, IFacade, INotification, IObserver, Observer } from "pure-framework";
 
-import AppFacade from "../../App";
 import OkexProxy from "../../proxy/okex";
 import appevents from "../../base/common/events";
 import approuters from "../../base/routers";
@@ -31,22 +30,22 @@ class OkexMediator extends Mediator {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver(appevents.EvtInitServer, this.observer);
-        AppFacade.getInstance().registerObserver(appevents.EvtOkexTicker, this.observer);
-        AppFacade.getInstance().registerObserver(appevents.EvtOkexRate, this.observer);
-        AppFacade.getInstance().registerObserver(appevents.EvtOkexBTCRate, this.observer);
-        AppFacade.getInstance().registerObserver(appevents.EvtOkexETHRate, this.observer);
+        this.facade.registerObserver(appevents.EvtInitServer, this.observer);
+        this.facade.registerObserver(appevents.EvtOkexTicker, this.observer);
+        this.facade.registerObserver(appevents.EvtOkexRate, this.observer);
+        this.facade.registerObserver(appevents.EvtOkexBTCRate, this.observer);
+        this.facade.registerObserver(appevents.EvtOkexETHRate, this.observer);
     }
 
     // overwrite
     onRemove(): void {
         super.onRemove();
 
-        AppFacade.getInstance().removeObserver(appevents.EvtInitServer, this);
-        AppFacade.getInstance().removeObserver(appevents.EvtOkexTicker, this);
-        AppFacade.getInstance().removeObserver(appevents.EvtOkexRate, this);
-        AppFacade.getInstance().removeObserver(appevents.EvtOkexBTCRate, this);
-        AppFacade.getInstance().removeObserver(appevents.EvtOkexETHRate, this);
+        this.facade.removeObserver(appevents.EvtInitServer, this);
+        this.facade.removeObserver(appevents.EvtOkexTicker, this);
+        this.facade.removeObserver(appevents.EvtOkexRate, this);
+        this.facade.removeObserver(appevents.EvtOkexBTCRate, this);
+        this.facade.removeObserver(appevents.EvtOkexETHRate, this);
     }
 
     // public
@@ -238,7 +237,7 @@ class OkexMediator extends Mediator {
     }
 
     private get OkexProxy(): OkexProxy {
-        return AppFacade.getInstance().retrieveProxy(OkexProxy.TagName)! as OkexProxy;
+        return this.facade.retrieveMediator(OkexProxy.TagName)! as OkexProxy;
     }
 }
 

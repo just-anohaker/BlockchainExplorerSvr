@@ -2,7 +2,6 @@ import koa = require("koa");
 import koarouter = require("koa-router");
 import { Mediator, IFacade, INotification, IObserver, Observer } from "pure-framework";
 
-import AppFacade from "../../App";
 import appevents from "../../base/common/events";
 import approuters from "../../base/routers";
 import { NBInitServer } from "../../base/common/definitions";
@@ -22,14 +21,14 @@ class TokenMediator extends Mediator {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver(appevents.EvtInitServer, this.observer);
+        this.facade.registerObserver(appevents.EvtInitServer, this.observer);
     }
 
     // overwrite
     onRemove(): void {
         super.onRemove();
 
-        AppFacade.getInstance().removeObserver(appevents.EvtInitServer, this);
+        this.facade.removeObserver(appevents.EvtInitServer, this);
     }
 
     // public

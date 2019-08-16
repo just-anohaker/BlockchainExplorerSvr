@@ -1,5 +1,4 @@
 import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
-import AppFacade from "../../App";
 import appevents from "../../base/common/events";
 
 class TemplateProxy extends Proxy {
@@ -17,14 +16,14 @@ class TemplateProxy extends Proxy {
     onRegister(): void {
         super.onRegister();
 
-        AppFacade.getInstance().registerObserver(appevents.EvtAppReady, this.observer);
+        this.facade.registerObserver(appevents.EvtAppReady, this.observer);
     }
 
     // overwrite
     onRemove(): void {
         super.onRemove();
 
-        AppFacade.getInstance().removeObserver(appevents.EvtAppReady, this);
+        this.facade.removeObserver(appevents.EvtAppReady, this);
     }
 
     // public
