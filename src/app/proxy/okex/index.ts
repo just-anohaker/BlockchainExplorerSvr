@@ -1,7 +1,7 @@
 import { PublicClient, V3WebsocketClient } from "@okfe/okex-node";
 import { Proxy, IFacade, IObserver, Observer, INotification } from "pure-framework";
 import AppFacade from "../../App";
-import appevents, { AppEvents } from "../../base/common/events";
+import appevents from "../../base/common/events";
 import { constants } from "../../base/config";
 
 const TIMEOUT_DURATION = 30 * 1000;
