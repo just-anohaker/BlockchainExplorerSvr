@@ -11,6 +11,7 @@ export const enum constants {
 
 export const config = {
     TokenCount: 210000000,
+    ETMServer: "https://api.entanmo.com",
 }
 
 export default config;

@@ -7,8 +7,10 @@ import appevents from "./base/common/events";
 /// mediators
 import OkexMediator from "./mediator/okex";
 import TokenMediator from "./mediator/token";
+import BlockchainMediator from "./mediator/blockchain";
 /// proxies
 import OkexProxy from "./proxy/okex";
+import BlockchainProxy from "./proxy/blockchain";
 
 class AppFacade extends Facade implements IFacade {
     private static instance?: AppFacade;
@@ -30,10 +32,12 @@ class AppFacade extends Facade implements IFacade {
     private registerMediators(): void {
         this.registerMediator(new OkexMediator(this));
         this.registerMediator(new TokenMediator(this));
+        this.registerMediator(new BlockchainMediator(this));
     }
 
     private registerProxies(): void {
         this.registerProxy(new OkexProxy(this));
+        this.registerProxy(new BlockchainProxy(this));
     }
 
     initServer(koa: koa<any, {}>, io: socketio.Server): void {

@@ -17,3 +17,7 @@ export type NBOkexRate = {
     // instrument_id: string;
     rate: string;
 }
+
+export type NBBlockChange = {
+    height: number;
+}
