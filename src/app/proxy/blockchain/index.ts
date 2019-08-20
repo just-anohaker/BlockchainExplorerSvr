@@ -21,8 +21,6 @@ class BlockchainProxy extends Proxy {
         super.onRegister();
 
         this.facade.registerObserver(appevents.EvtAppReady, this.observer);
-
-        // this.onStartMonit();
     }
 
     // overwrite
@@ -30,6 +28,7 @@ class BlockchainProxy extends Proxy {
         super.onRemove();
 
         this.facade.removeObserver(appevents.EvtAppReady, this);
+        this.stopConnection();
     }
 
     // // public

@@ -5,6 +5,7 @@ import { Mediator, IFacade, INotification, IObserver, Observer } from "pure-fram
 
 import appevents from "../../base/common/events";
 import approuters from "../../base/routers";
+import config from "../../base/config";
 import { NBInitServer, NBBlockChange } from "../../base/common/definitions";
 
 class BlockchainMediator extends Mediator {
@@ -34,19 +35,19 @@ class BlockchainMediator extends Mediator {
     }
 
     // public
-    // async getTokenCount(ctx: koa.Context): Promise<void> {
-    //     this.response(ctx, { tokenName: "ETM", tokenCount: config.TokenCount }, undefined);
-    // }
+    async getNodeServers(ctx: koa.Context): Promise<void> {
+        this.response(ctx, { servers: [config.ETMServer] }, undefined);
+    }
 
     // private
-    // private initAPI(koa: koa<any, {}>): void {
-    //     const router = new koarouter();
+    private initAPI(koa: koa<any, {}>): void {
+        const router = new koarouter();
 
-    //     /// routes
-    //     // router.get(approuters.APITokenCount, this.getTokenCount.bind(this));
+        /// routes
+        router.get(approuters.APIGetNodeServers, this.getNodeServers.bind(this));
 
-    //     koa.use(router.routes());
-    // }
+        koa.use(router.routes());
+    }
 
     // notifications
     private onNotification(notification: INotification) {
@@ -54,7 +55,7 @@ class BlockchainMediator extends Mediator {
         if (name === appevents.EvtInitServer) {
             const body = notification.getBody() as NBInitServer;
             this.io = body.io;
-            // this.initAPI(body.koa);
+            this.initAPI(body.koa);
         } else if (name === appevents.EvtBlocksChange) {
             const body = notification.getBody() as NBBlockChange;
             this.notifyBlocksChange(body);

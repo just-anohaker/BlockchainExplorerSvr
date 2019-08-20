@@ -99,11 +99,11 @@
 
 返回值
 
-| 字段    | 类型   | 说明                                                       |
-| ------- | ------ | ---------------------------------------------------------- |
-| success | string | 请求是否成功；True:成功;False:失败                         |
-| error   | string | success=False时返回，success=True时返回其它字段            |
-| data    | object | 获取ETM总发行量(暂定为210000000)，格式参见"TokenCount"说明 |
+| 字段    | 类型   | 说明                                                         |
+| ------- | ------ | ------------------------------------------------------------ |
+| success | string | 请求是否成功；True:成功;False:失败                           |
+| error   | string | success=False时返回，success=True时返回其它字段              |
+| data    | object | 获取ETM总发行量(暂定为210000000)，格式参见**"TokenCount"**说明 |
 
 *"TokenCount"说明：*
 
@@ -111,6 +111,28 @@
 {
     "tokenName": "ETM",						// Token名称
     "tokenCount": 210000000				// Token总发行量
+}
+```
+
+### 获取区块链节点
+
+***(GET)API接口/api/blockchain/servers***
+
+返回值
+
+| 字段    | 类型    | 说明                                                         |
+| ------- | ------- | ------------------------------------------------------------ |
+| success | boolean | 请求是否成功；True:成功;False:失败                           |
+| error   | string  | success=False时返回，success=True时返回其它字段              |
+| data    | object  | 获取当前服务器相关的entanmo节点服务器列表，格式参见**"NodeServers"**说明 |
+
+*"NodeServers"说明:*
+
+```javascript
+{
+  	"servers": [
+      	"https://api.entanmo.com",					// entanmo区块链相关的节点服务器信息
+    ]
 }
 ```
 
