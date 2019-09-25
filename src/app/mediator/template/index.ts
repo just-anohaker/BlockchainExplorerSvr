@@ -25,9 +25,9 @@ class TemplateMediator extends Mediator {
 
     // overwrite
     onRemove(): void {
-        super.onRemove();
-
         this.facade.removeObserver(appevents.EvtInitServer, this);
+
+        super.onRemove();
     }
 
     // public

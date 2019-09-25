@@ -25,13 +25,16 @@ class BlockchainMediator extends Mediator {
 
         this.facade.registerObserver(appevents.EvtInitServer, this.observer);
         this.facade.registerObserver(appevents.EvtBlocksChange, this.observer);
+        this.facade.registerObserver(appevents.EvtRoundChange, this.observer);
     }
 
     // overwrite
     onRemove(): void {
-        super.onRemove();
-
+        this.facade.removeObserver(appevents.EvtRoundChange, this);
+        this.facade.removeObserver(appevents.EvtBlocksChange, this);
         this.facade.removeObserver(appevents.EvtInitServer, this);
+
+        super.onRemove();
     }
 
     // public
@@ -59,12 +62,20 @@ class BlockchainMediator extends Mediator {
         } else if (name === appevents.EvtBlocksChange) {
             const body = notification.getBody() as NBBlockChange;
             this.notifyBlocksChange(body);
+        } else if (name === appevents.EvtRoundChange) {
+            const body = notification.getBody() as any;
+            this.notifyRoundChange(body);
         }
     }
 
     private notifyBlocksChange(body: NBBlockChange): void {
         console.log("[app] notifyBlocksChange:", JSON.stringify(body));
         this.io ? this.io.emit(appevents.IOBlocksChange, body) : undefined;
+    }
+
+    private notifyRoundChange(body: any): void {
+        console.log("[app] notifyRoundChange:", JSON.stringify(body));
+        this.io ? this.io.emit(appevents.IORoundChange, body) : undefined;
     }
 
     // helpers

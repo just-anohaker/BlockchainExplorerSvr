@@ -39,13 +39,13 @@ class OkexMediator extends Mediator {
 
     // overwrite
     onRemove(): void {
-        super.onRemove();
-
         this.facade.removeObserver(appevents.EvtInitServer, this);
         this.facade.removeObserver(appevents.EvtOkexTicker, this);
         this.facade.removeObserver(appevents.EvtOkexRate, this);
         this.facade.removeObserver(appevents.EvtOkexBTCRate, this);
         this.facade.removeObserver(appevents.EvtOkexETHRate, this);
+
+        super.onRemove();
     }
 
     // public

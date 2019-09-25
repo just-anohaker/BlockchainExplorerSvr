@@ -25,10 +25,10 @@ class BlockchainProxy extends Proxy {
 
     // overwrite
     onRemove(): void {
-        super.onRemove();
-
         this.facade.removeObserver(appevents.EvtAppReady, this);
         this.stopConnection();
+
+        super.onRemove();
     }
 
     // // public
@@ -49,12 +49,17 @@ class BlockchainProxy extends Proxy {
         this.sendNotification(appevents.EvtBlocksChange, data);
     }
 
+    private onRoundChangedEvent(data: any): void {
+        this.sendNotification(appevents.EvtRoundChange, data);
+    }
+
     private startConnection(): void {
         this.stopConnection();
 
         this.socket = SocketIOClient(config.ETMServer);
 
         this.socket.on("blocks/change", this.onBlockChangedEvent.bind(this));
+        this.socket.on("rounds/change", this.onRoundChangedEvent.bind(this));
     }
 
     private stopConnection(): void {

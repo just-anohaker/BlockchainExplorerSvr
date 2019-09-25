@@ -21,9 +21,9 @@ class TemplateProxy extends Proxy {
 
     // overwrite
     onRemove(): void {
-        super.onRemove();
-
         this.facade.removeObserver(appevents.EvtAppReady, this);
+
+        super.onRemove();
     }
 
     // public

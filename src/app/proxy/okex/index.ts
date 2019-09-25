@@ -35,10 +35,10 @@ class OkexProxy extends Proxy {
 
     // overwrite
     onRemove(): void {
-        super.onRemove();
-
         this.facade.removeObserver(appevents.EvtAppReady, this);
         this.stopLegalCurrencyRate();
+
+        super.onRemove();
     }
 
     // public
