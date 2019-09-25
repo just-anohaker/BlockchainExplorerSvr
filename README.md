@@ -237,3 +237,13 @@
 }
 ```
 
+***(Event)"/rounds/change"***
+
+数据
+
+```javascript
+{
+  "number": 10				// current round number
+}
+```
+
